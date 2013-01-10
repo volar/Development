@@ -1,35 +1,41 @@
 #!/usr/bin/env ruby
+ARGV.clear # no command line arguments to mess up gets could also just do $stdin.gets
+CLEAR = "\e[0m"
+BOLD = "\e[1m"
+RED = "\e[31m"
 
-#
-# just run this script in which ever directory you'd like to recursively  find all list of files files to 
-#
-# add posibility for adding file extensions .
-# add check for user imput
-
-@pwd = Dir.pwd
-@getDirOnly = "/"
-@yes = "y"
-@no = "n"
- 
 puts "\n------------------------------------\n"
 puts "-                                    -\n"
 puts "- Generating List for dir path :     -\n"
 puts "-                                    -\n"
 puts "--------------------------------------\n"
-puts "#{@pwd}\n\n"
-puts "Get all Files[y/n]: "
+puts "#{Dir.pwd}\n\n"
 
-@getFilesOrDirs = gets
+get_files_or_dirs = ''
+print "Get all Files[y/n] : "
+until ["y","n","yes","no"].include? get_files_or_dirs = gets.chomp.downcase do
+	print "#{BOLD}#{RED}Please enter either 'y' or 'n':#{CLEAR}"
+end 
 
-if @getFilesOrDirs.include? @yes
-	puts "Getting All File Types"
-	@getDirOnly = ""
-elsif @getFilesOrDirs.include? @no
-	puts "Getting Directories Only"
-	@getDirOnly = "/"
+path_regex = "**/*"
+puts "\n"
+
+if get_files_or_dirs[0] == "n"
+	puts "Getting Directories Only#{CLEAR}\n"
+	# path_regex = "#{path_regex}/"
+	path_regex.concat "/"
+else
+	puts "Getting All File Paths#{CLEAR}\n"
 end	
+puts "\n"
 
-Dir["**/*#{@getDirOnly}"].each do |filename| 
-	#puts filename
-	puts  " - #{filename}";
+files = Dir[path_regex]
+
+if files.empty?
+	puts " #{Dir.pwd} is empty!"
+else
+	files.sort.each do |filename| 
+		puts " #{BOLD}#{filename}#{CLEAR}"
+	end
 end
+puts "\n"
